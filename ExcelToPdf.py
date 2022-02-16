@@ -10,32 +10,44 @@
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
 """
+https://www.zacoding.com/post/python-excel-to-pdf/
+実行後、実行画面でpdf化したいシート名を入力するとそのシート名を含む全てのシートをpdf化する。
+例)様式3-8と入力すると様式3-8(2)や様式3-8(3)等もpdfにする
 任意のフォルダに入っているすべてのExcelをpdfにする
 ※一つのExcelから一つのpdfを出力
 
 import com_errorで構文エラーが出てても動くが、変換後のpdfの1枚1枚のページサイズがA4A3に微妙に統一されない。おすすめしない
-26行目で絶対パスを指定する
-複数シートをpdfにしたい場合は
-ws_index_listのリストでインデックス指定する。1が最初（一番左）のシート。
+30行目で絶対パスを指定する
+やり方１
+実行後、実行画面でpdf化したいシート名を入力する。
 実行すると同じフォルダに同名でpdfに出力される
+プレビューウィンドウは閉じておくこと
+上書き保存出来ないので、同名のpdfがある場合は削除しておくこと
 """
 import os
 import win32com.client
 import glob
-import pywintypes
+from pywintypes import com_error
 i=0
-for FILE_PATH in (glob.glob(u'F:/yokosuka/PyAutoGui_OutPutTest/gomi/*.xls*')):#glob.globのリストインデックスで途中から処理可能。例　xls*')[13:]):
-        dir=(glob.glob(u'F:/yokosuka/PyAutoGui_OutPutTest/gomi/*.xls*'))
+sheet_name=input("pdfにしたいシート名を入れて→")
+for FILE_PATH in (glob.glob(u'D:/yokosuka/excel/*.xls*')):#glob.globのリストインデックスで途中から処理可能。例　xls*')[13:]):
+        dir=(glob.glob(u'D:/yokosuka/excel//*.xls*'))
         print(dir)
         print(FILE_PATH)
 
         sprit_file_path=os.path.splitext(FILE_PATH)
         PATH_TO_PDF = sprit_file_path[0]+".pdf"
 
-
         excel = win32com.client.Dispatch("Excel.Application")
-
         excel.Visible = False
+        #全シート名を表示
+        wb = excel.Workbooks.Open(FILE_PATH)
+        ws_index_list=[]
+
+        for i in range(0, wb.Worksheets.Count):
+            print(wb.Worksheets[i].name)
+            if sheet_name in wb.Worksheets[i].name:
+                ws_index_list.append(i+1)
 
         try:
             print('PDFへ変換開始')
@@ -47,12 +59,27 @@ for FILE_PATH in (glob.glob(u'F:/yokosuka/PyAutoGui_OutPutTest/gomi/*.xls*')):#g
             #ws_index_list=[3,4,5,6]
             #全てのシートをpdf にしたい場合は下記2行を有効にする
             len_wb=len(wb.WorkSheets)
-            ws_index_list = list(range(1,len_wb+1))
-
+            # ws_index_list = list(range(1,len_wb+1))
+            # wb.WorkSheets("様式3-8").Select()
             #シート名で指定
-            wb.WorkSheets("様式4-3").Select()
+            # if  wb.WorkSheets("様式3-8 (2)"):
+            #     wb.append("様式3-8 (2)").Select()
+            # elif wb.WorkSheets("様式3-8 (2)"):
+            #     wb.append("様式3-8 (2)").Select()
+            # if not wb.WorkSheets("様式3-8 (3)"):
+            #     break
+            # else:wb.append("様式3-8 (3)").Select()
+            #
+            # if not wb.WorkSheets("様式3-8 (4)"):
+            #     break
+            # else:wb.append("様式3-8 (4)").Select()
+            #
+            # if not wb.WorkSheets("様式3-8 (5)"):
+            #     break
+            # else:wb.append("様式3-8 (5)").Select()
+
             # ws_index_listでpdf化するシートを指定
-            wb.WorkSheets(ws_index_list[1:]).Select()#ws_index_listでpdf化するシートを指定
+            wb.WorkSheets(ws_index_list).Select()#ws_index_listでpdf化するシートを指定
 
             # 保存
             wb.ActiveSheet.ExportAsFixedFormat(0, PATH_TO_PDF)
@@ -61,6 +88,6 @@ for FILE_PATH in (glob.glob(u'F:/yokosuka/PyAutoGui_OutPutTest/gomi/*.xls*')):#g
         else:
             print('成功しました')
         finally:
-            wb.Close()
+            wb.Close(False)#Falseで保存しないで閉じる。Trueで上書き保存
             excel.Quit()
 

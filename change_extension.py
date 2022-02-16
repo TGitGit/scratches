@@ -3,6 +3,7 @@
 〇xlsm→xlsx
 〇xls→xlsx
 〇xlsx→xls
+〇xlsm→xls
 ×xls→xlsm
 ×xlsx→xlsm
 files,changed,extensionの3個の変数を事前設定して実行する
@@ -13,9 +14,9 @@ import win32com.client as win32
 import glob
 
 #変換したいExcelブックが入っているフォルダを指定
-files = glob.glob("D:/change_extension/original/**.xls*")
+files = glob.glob("D:/上北2.1作業/調書/土石流/みちのく計画/**.xls*")
 #変換したExcelを収めるフォルダを指定
-changed= os.path.abspath("D:/change_extension/changed")
+changed= os.path.abspath("D:/上北2.1作業/調書/土石流/みちのく計画/xlsx")
 #拡張子を指定
 extension=".xlsx"
 

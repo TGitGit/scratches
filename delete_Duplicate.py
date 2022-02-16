@@ -19,23 +19,24 @@ DBに工種を入力する際に重複している工種を削除するスクリ
 import os
 import pandas
 import xlwt
-#各調書から工種一覧をまとめたExcel
-excel="Z:/R02横須賀基礎調査/28国提出用DB/0302DB作成/pythonで抽出/対策施設工種名称.xls"
-#出力先
-xls="Z:/R02横須賀基礎調査/28国提出用DB/0302DB作成/pythonで抽出/対策施設工種名称(重複削除)2.xls"
+
+# 各調書から工種一覧をまとめたExcel
+excel = "Z:/R02横須賀基礎調査/28国提出用DB/0302DB作成/pythonで抽出/対策施設工種名称.xls"
+# 出力先
+xls = "Z:/R02横須賀基礎調査/28国提出用DB/0302DB作成/pythonで抽出/対策施設工種名称(重複削除)2.xls"
 
 wb = xlwt.Workbook()
 add_sheet = wb.add_sheet("new", cell_overwrite_ok=True)
-#pandasでExcelシートを読み込む。第2引数で読み込むexcelのシート名を指定する
-df=pandas.read_excel(excel, "new",header=None)
+# pandasでExcelシートを読み込む。第2引数で読み込むexcelのシート名を指定する
+df = pandas.read_excel(excel, "new", header=None)
 
 for row in range(df.shape[0]):
-    #1行ずつ読み取ってリストにする
-    list=df.iloc[row].to_list()
-    #set型にして重複を削除する。sorted(set(list),key=list.index)こう書くとset型にしても並び順が崩れない！
-    uniqued=sorted(set(list),key=list.index)
+    # 1行ずつ読み取ってリストにする
+    list = df.iloc[row].to_list()
+    # set型にして重複を削除する。sorted(set(list),key=list.index)こう書くとset型にしても並び順が崩れない！
+    uniqued = sorted(set(list), key=list.index)
 
-    #uniquedがある分だけ書き込む
+    # uniquedがある分だけ書き込む
     for uni in uniqued:
-        add_sheet.write(row,uniqued.index(uni),str(uni))
+        add_sheet.write(row, uniqued.index(uni), str(uni))
     wb.save(xls)
