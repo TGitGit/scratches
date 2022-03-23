@@ -19,19 +19,19 @@ import xlwings as xw
 from tqdm import tqdm
 import glob
 #追加先のExcelが入っているフォルダを指定
-dir="D:/python/input_value_excel/data/*.xls*"
+dir="D:/python/input_value_excel/土石流/xlsx/sheet0_append/*.xls*"
 xw.App(visible=False)
 
-for book in tqdm(glob.glob(dir)[122:]):
+for book in tqdm(glob.glob(dir)[1:]):
     #dirで指定したフォルダにあるブックをbk_zという名前でひとつづつ開く
     print(os.path.basename(book))
     bk_z = xw.Book(book)
     # シートを選択
-    input_sheet=bk_z.sheets["様式0"]
+    input_sheet=bk_z.sheets["①様式0"]
     #　選択したシートに値(シート関数)を入れる
-    input_sheet.range((3,5)).value="='様式1-1'!E3:F3"
-    input_sheet.range((3, 8)).value = "='様式1-1'!RC:RC[1]"
-    input_sheet.range((3, 11)).value = "='様式1-1'!RC[1]"
+    input_sheet.range((3,5)).value="=表紙!C6"
+    input_sheet.range((3, 8)).value = "=表紙!C9"
+    input_sheet.range((3, 11)).value = "=表紙!C10"
     # セルの表示形式を変える
     # input_sheet.range((2,5)).number_format = 'yyy/m/d'
     bk_z.save()
